@@ -1,0 +1,212 @@
+// components/portfolio/TransactionHistory.tsx
+import React, { useState } from 'react';
+import {
+  alpha, Box, Chip, IconButton, Paper, Table, TableBody, 
+  TableCell, TableContainer, TableHead, TablePagination, TableRow, 
+  Tooltip, Typography, useTheme
+} from '@mui/material';
+import { 
+  Launch as LaunchIcon
+} from '@mui/icons-material';
+import { getTxExplorerUrl } from '../../lib/utils/explorerUtils';
+
+// Transaction history type definition
+export interface Transaction {
+  hash: string;
+  type: 'Swap' | 'Send' | 'Receive';
+  from: string;
+  to: string;
+  amount: string;
+  value: string;
+  timestamp: string;
+  status: 'pending' | 'completed' | 'failed' | 'success';
+  // Additional fields from API
+  chain?: string;
+  details?: string;
+  chainIndex?: string; // Chain ID for determining explorer
+}
+
+interface TransactionHistoryProps {
+  transactions: Transaction[];
+}
+
+const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions }) => {
+  const theme = useTheme();
+  // Pagination state
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  // Handle pagination change
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  // Helper to normalize status values
+  const normalizeStatus = (status: string): 'pending' | 'completed' | 'failed' => {
+    const statusLower = status.toLowerCase();
+    if (statusLower === 'success') return 'completed';
+    if (statusLower === 'failed' || statusLower === 'error') return 'failed';
+    if (statusLower === 'pending' || statusLower === 'processing') return 'pending';
+    return 'completed'; // Default to completed
+  };
+
+  // Helper to shorten addresses
+  const shortenAddress = (address: string): string => {
+    if (!address || address.length < 8) return address;
+    // Check if it's likely an address (has 0x prefix and is long enough)
+    if (address.startsWith('0x') && address.length >= 10) {
+      return `${address.substring(0, 5)}...${address.substring(address.length - 3)}`;
+    }
+    return address;
+  };
+
+  return (
+    <Box sx={{ mb: 4 }}>
+      <Typography gutterBottom variant="h6">
+        Recent Transactions
+      </Typography>
+      <TableContainer 
+        component={Paper} 
+        sx={{ 
+          borderRadius: 2,
+          overflow: 'hidden',
+          border: `1px solid ${theme.palette.divider}`,
+          boxShadow: 'none',
+        }}
+      >
+        <Table>
+          <TableHead>
+            <TableRow sx={{ bgcolor: alpha(theme.palette.background.default, 0.6) }}>
+              <TableCell>Type</TableCell>
+              <TableCell>Details</TableCell>
+              <TableCell>Chain</TableCell>
+              <TableCell align="right">Amount</TableCell>
+              <TableCell align="right">Value</TableCell>
+              <TableCell align="right">Time</TableCell>
+              <TableCell align="right">Status</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {transactions.length === 0 ? (
+              <TableRow>
+                <TableCell align="center" colSpan={7}>
+                  <Typography sx={{ py: 4 }} variant="body1">
+                    No transactions found
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            ) : (
+              transactions
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((tx, index) => (
+                  <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableCell>
+                      <Chip 
+                        label={tx.type} 
+                        size="small"
+                        sx={{ 
+                          bgcolor: 
+                            tx.type === 'Swap' ? alpha(theme.palette.info.main, 0.1) : 
+                              tx.type === 'Send' ? alpha(theme.palette.error.main, 0.1) : 
+                                alpha(theme.palette.success.main, 0.1),
+                          color: 
+                            tx.type === 'Swap' ? theme.palette.info.main : 
+                              tx.type === 'Send' ? theme.palette.error.main : 
+                                theme.palette.success.main,
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Box>
+                          <Typography variant="body2">
+                            {tx.details || (tx.type === 'Swap' ? 
+                              `${shortenAddress(tx.from)} → ${shortenAddress(tx.to)}` : 
+                              `${shortenAddress(tx.from)} → ${shortenAddress(tx.to)}`
+                            )}
+                          </Typography>
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography color="text.secondary" variant="caption">
+                              {shortenAddress(tx.hash)}
+                            </Typography>
+                            <Tooltip title="View on blockchain explorer">
+                              <IconButton
+                                component="a"
+                                href={getTxExplorerUrl(tx.hash, tx.chainIndex || '1')}
+                                size="small"
+                                sx={{ ml: 0.5 }}
+                                target="_blank"
+                              >
+                                <LaunchIcon fontSize="inherit" />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      {tx.chain && (
+                        <Chip 
+                          label={tx.chain} 
+                          size="small"
+                          sx={{ 
+                            bgcolor: alpha(theme.palette.primary.main, 0.05),
+                            color: theme.palette.text.primary
+                          }}
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="body2">
+                        {tx.amount}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography fontWeight={500} variant="body2">
+                        {tx.value}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="body2">
+                        {tx.timestamp}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Chip 
+                        color={
+                          normalizeStatus(tx.status) === 'completed' ? 
+                            'success' : 
+                            normalizeStatus(tx.status) === 'failed' ? 
+                              'error' : 
+                              'default'
+                        } 
+                        label={normalizeStatus(tx.status)}
+                        size="small"
+                        sx={{ textTransform: 'capitalize' }}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))
+            )}
+          </TableBody>
+        </Table>
+        <TablePagination
+          component="div"
+          count={transactions.length}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[5, 10, 25]}
+        />
+      </TableContainer>
+    </Box>
+  );
+};
+
+export default TransactionHistory;
