@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ConnectWalletButton } from '../shared/ConnectWalletButton';
 import { ThemeToggle } from '../shared/ThemeToggle';
+import ApprovalButton from '../shared/ApprovalButton';
 
 const navItems = [
   { name: 'Home', href: '/' },
@@ -12,6 +13,7 @@ const navItems = [
   // { name: 'Portfolio', href: '/portfolio' },
   // { name: 'Wallet', href: '/wallet' },
   { name: 'Multi-Signature', href: '/multisig' },
+  { name: 'DApp Browser', href: '/dapps' },
   // { name: 'About', href: '/about' },
 ];
 
@@ -58,6 +60,7 @@ export default function Header() {
 
           {/* Right Side Controls */}
           <div className="flex items-center space-x-2">
+            <ApprovalButton />
             <ThemeToggle />
             <ConnectWalletButton />
             
