@@ -155,7 +155,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
           <TableBody>
             {assets.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-10">
+                <TableCell colSpan={7} className="text-center py-10 text-warm-textSecondary dark:text-gray-400">
                   No assets found
                 </TableCell>
               </TableRow>
@@ -172,7 +172,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
                       />
                       <div>
                         <div className="flex items-center">
-                          <div className="font-medium text-gray-900 dark:text-white">
+                          <div className="font-medium text-warm-text dark:text-white">
                             {asset.name}
                           </div>
                           {/* For multisig wallet: show whitelist status */}
@@ -195,7 +195,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
                             </div>
                           )}
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="text-xs text-warm-textSecondary dark:text-gray-400">
                           {asset.symbol}
                         </div>
                       </div>
@@ -208,13 +208,13 @@ const AssetTable: React.FC<AssetTableProps> = ({
                       </Badge>
                     )}
                   </TableCell>
-                  <TableCell className="text-right font-medium">
+                  <TableCell className="text-right font-medium text-warm-text dark:text-white">
                     {asset.balance.toLocaleString(undefined, { maximumFractionDigits: 6 })} {asset.symbol}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right text-warm-text dark:text-white">
                     ${asset.price.toLocaleString(undefined, { maximumFractionDigits: 6 })}
                   </TableCell>
-                  <TableCell className="text-right font-medium">
+                  <TableCell className="text-right font-medium text-warm-text dark:text-white">
                     ${asset.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                   </TableCell>
                   <TableCell className="text-right">

@@ -71,26 +71,26 @@ const QuickTransferCard: React.FC<QuickTransferCardProps> = ({
   return (
     <Card className="mb-6">
       <CardContent className="p-0">
-        <div className="grid md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-dark-100">
+        <div className="grid md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-warm-divider dark:divide-dark-100">
           {/* Left side - Sender */}
-          <div className="p-6 md:col-span-2 bg-gray-50 dark:bg-dark-200">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">From</h3>
+          <div className="p-6 md:col-span-2 bg-warm-bg dark:bg-dark-200">
+            <h3 className="text-sm font-medium text-warm-textSecondary dark:text-gray-400 mb-3">From</h3>
             
             <div className="flex items-center mb-4">
               <Avatar 
                 initials="D" 
                 size="md"
-                className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 mr-3"
+                className="bg-warm-primary/20 dark:bg-warm-primary/30 text-warm-primary dark:text-warm-secondary mr-3"
               />
               <div>
-                <p className="font-medium text-gray-900 dark:text-white">{userWalletName}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{formatAddress(userWalletAddress)}</p>
+                <p className="font-medium text-warm-text dark:text-white">{userWalletName}</p>
+                <p className="text-xs text-warm-textSecondary dark:text-gray-400">{formatAddress(userWalletAddress)}</p>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-dark-100 border border-gray-200 dark:border-dark-100 rounded-md p-3 mb-4">
-              <p className="text-xs text-gray-500 dark:text-gray-400">Total Balance</p>
-              <p className="text-xl font-semibold text-gray-900 dark:text-white">${totalBalance.toLocaleString(undefined, {
+            <div className="bg-warm-paper dark:bg-dark-100 border border-warm-divider dark:border-dark-100 rounded-md p-3 mb-4">
+              <p className="text-xs text-warm-textSecondary dark:text-gray-400">Total Balance</p>
+              <p className="text-xl font-semibold text-warm-text dark:text-white">${totalBalance.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               })}</p>
@@ -98,7 +98,7 @@ const QuickTransferCard: React.FC<QuickTransferCardProps> = ({
             
             <div className="space-y-3">
               <select 
-                className="w-full py-2 px-3 border border-gray-300 dark:border-dark-100 bg-white dark:bg-dark-300 rounded-md shadow-sm text-gray-700 dark:text-gray-200"
+                className="w-full py-2 px-3 border border-warm-divider dark:border-dark-100 bg-warm-paper dark:bg-dark-300 rounded-md shadow-sm text-warm-text dark:text-gray-200"
                 value={selectedToken}
                 onChange={(e) => setSelectedToken(e.target.value)}
               >
@@ -123,17 +123,17 @@ const QuickTransferCard: React.FC<QuickTransferCardProps> = ({
           
           {/* Arrow for desktop */}
           <div className="hidden md:flex md:col-span-1 items-center justify-center">
-            <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-dark-100 flex items-center justify-center text-blue-500 dark:text-blue-400">
+            <div className="w-10 h-10 rounded-full bg-warm-bg dark:bg-dark-100 flex items-center justify-center text-warm-primary dark:text-warm-secondary">
               <ArrowForwardIcon />
             </div>
           </div>
           
           {/* Right side - Recipient */}
-          <div className="p-6 md:col-span-2">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">To</h3>
+          <div className="p-6 md:col-span-2 bg-warm-paper dark:bg-dark-200">
+            <h3 className="text-sm font-medium text-warm-textSecondary dark:text-gray-400 mb-3">To</h3>
             
             {relatedWallets.length === 0 ? (
-              <div className="text-center p-6 border border-yellow-200 dark:border-yellow-900/30 rounded-md bg-yellow-50 dark:bg-yellow-900/10">
+              <div className="text-center p-6 border border-yellow-300/50 dark:border-yellow-900/30 rounded-md bg-yellow-50/50 dark:bg-yellow-900/10">
                 <p className="text-sm text-yellow-700 dark:text-yellow-500 mb-3">
                   No related wallets found. You need to create a multi-signature wallet first.
                 </p>
@@ -153,8 +153,8 @@ const QuickTransferCard: React.FC<QuickTransferCardProps> = ({
                     onClick={() => setSelectedRecipient(wallet.multisig_address)}
                     className={`flex items-center p-3 border rounded-md cursor-pointer ${
                       selectedRecipient === wallet.multisig_address
-                        ? 'border-clay-500 dark:border-clay-400 bg-clay-50 dark:bg-clay-900/10'
-                        : 'border-gray-200 dark:border-dark-100 hover:border-gray-300 dark:hover:border-gray-700'
+                        ? 'border-warm-primary dark:border-warm-primary/80 bg-warm-primary/10 dark:bg-warm-primary/20'
+                        : 'border-warm-divider dark:border-dark-100 hover:border-warm-divider/70 dark:hover:border-gray-700'
                     }`}
                   >
                     <input
@@ -164,8 +164,8 @@ const QuickTransferCard: React.FC<QuickTransferCardProps> = ({
                       className="mr-3"
                     />
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-white">{wallet.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="font-medium text-warm-text dark:text-white">{wallet.name}</p>
+                      <p className="text-xs text-warm-textSecondary dark:text-gray-400">
                         {wallet.chain} - {formatAddress(wallet.multisig_address)}
                       </p>
                     </div>

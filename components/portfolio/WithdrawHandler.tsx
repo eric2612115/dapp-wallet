@@ -1,20 +1,10 @@
 // components/portfolio/WithdrawHandler.tsx
 import React, { useState } from 'react';
-import { 
-  Button, 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogActions, 
-  Typography, 
-  CircularProgress,
-  Alert
-} from '@mui/material';
-import { 
-  CallMade as WithdrawIcon,
-  Close as CloseIcon
-} from '@mui/icons-material';
 import { useWithdraw } from '@/lib/hooks/useWithdraw';
+import Button from '@/components/ui/Button';
+import { Alert, AlertDescription } from '@/components/ui/Alert';
+import { Modal, ModalBody, ModalFooter } from '@/components/ui/Modal';
+import { CallMade as WithdrawIcon } from '@mui/icons-material';
 import type { Asset } from '@/types/assets';
 
 interface WithdrawHandlerProps {
@@ -51,64 +41,64 @@ const WithdrawHandler: React.FC<WithdrawHandlerProps> = ({
   return (
     <>
       <Button 
-        color="warning" 
-        onClick={handleOpen}
-        size="small"
+        variant="outline" 
+        size="sm"
         startIcon={<WithdrawIcon />}
-        sx={{ borderRadius: 1.5 }}
-        variant="outlined"
+        onClick={handleOpen}
       >
         Withdraw
       </Button>
       
-      <Dialog open={open} onClose={!withdrawing ? handleClose : undefined} maxWidth="xs" fullWidth>
-        <DialogTitle>
-          Withdraw {asset.symbol}
-          <Button
-            aria-label="close"
-            onClick={handleClose}
-            sx={{ position: 'absolute', right: 8, top: 8 }}
-            disabled={withdrawing}
-          >
-            <CloseIcon />
-          </Button>
-        </DialogTitle>
-        <DialogContent>
-          <Typography gutterBottom variant="body1">
+      <Modal 
+        isOpen={open} 
+        onClose={!withdrawing ? handleClose : () => {}}
+        title={`Withdraw ${asset.symbol}`}
+        maxWidth="sm"
+      >
+        <ModalBody className="py-4">
+          <p className="text-gray-800 dark:text-gray-200 mb-2">
             You are about to withdraw:
-          </Typography>
-          <Typography variant="h6" sx={{ mb: 2 }}>
+          </p>
+          <p className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
             {asset.balance} {asset.symbol} (${asset.value.toLocaleString()})
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
             This asset will be withdrawn from {walletName} to your personal wallet.
-            {!asset.isWhitelisted && (
-              <Alert severity="warning" sx={{ mt: 2 }}>
+          </p>
+          
+          {!asset.isWhitelisted && (
+            <Alert variant="warning" className="mb-4">
+              <AlertDescription>
                 This token is not whitelisted. The withdrawal may require additional approval from other wallet owners.
-              </Alert>
-            )}
-          </Typography>
-          {withdrawError && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {withdrawError}
+              </AlertDescription>
             </Alert>
           )}
-        </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 3 }}>
-          <Button onClick={handleClose} disabled={withdrawing}>
+          
+          {withdrawError && (
+            <Alert variant="error" className="mt-4">
+              <AlertDescription>{withdrawError}</AlertDescription>
+            </Alert>
+          )}
+        </ModalBody>
+        
+        <ModalFooter>
+          <Button 
+            variant="default" 
+            onClick={handleClose} 
+            disabled={withdrawing}
+          >
             Cancel
           </Button>
           <Button 
-            variant="contained" 
-            color="primary"
+            variant="primary"
             onClick={handleSubmit}
             disabled={withdrawing}
-            startIcon={withdrawing ? <CircularProgress size={20} /> : null}
+            isLoading={withdrawing}
           >
             {withdrawing ? 'Processing...' : 'Confirm Withdrawal'}
           </Button>
-        </DialogActions>
-      </Dialog>
+        </ModalFooter>
+      </Modal>
     </>
   );
 };

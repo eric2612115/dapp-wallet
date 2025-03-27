@@ -1,6 +1,7 @@
 // components/portfolio/MultisigWalletSelector.tsx
 import React from 'react';
 import { Alert, AlertDescription } from '@/components/ui/Alert';
+import Select from '@/components/ui/Select';
 import type { MultisigWallet } from '@/types/assets';
 
 interface MultisigWalletSelectorProps {
@@ -18,6 +19,11 @@ const MultisigWalletSelector: React.FC<MultisigWalletSelectorProps> = ({
   selectedMultisigWalletAddress,
   handleMultisigWalletChange
 }) => {
+  const walletOptions = relatedMultisigWallets.map(wallet => ({
+    value: wallet.multisig_address,
+    label: wallet.name
+  }));
+
   return (
     <div className="mb-6">
       {isLoadingWallets ? (
@@ -45,17 +51,14 @@ const MultisigWalletSelector: React.FC<MultisigWalletSelectorProps> = ({
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
             Select wallet:
           </label>
-          <select
-            value={selectedMultisigWalletAddress}
-            onChange={(e) => handleMultisigWalletChange(e.target.value)}
-            className="block w-full max-w-md pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-100 focus:outline-none focus:ring-clay-500 dark:focus:ring-clay-400 focus:border-clay-500 dark:focus:border-clay-400 sm:text-sm rounded-md bg-white dark:bg-dark-300 text-gray-700 dark:text-gray-200"
-          >
-            {relatedMultisigWallets.map((wallet) => (
-              <option key={wallet.multisig_address} value={wallet.multisig_address}>
-                {wallet.name}
-              </option>
-            ))}
-          </select>
+          <div className="w-full max-w-md">
+            <Select
+              options={walletOptions}
+              value={selectedMultisigWalletAddress}
+              onChange={handleMultisigWalletChange}
+              aria-label="Select multi-signature wallet"
+            />
+          </div>
         </div>
       )}
     </div>

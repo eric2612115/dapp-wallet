@@ -20,16 +20,16 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white dark:bg-dark-300 shadow-md">
+    <header className="bg-warm-paper dark:bg-dark-300 shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-md bg-clay-500 flex items-center justify-center text-white text-lg font-bold">
+              <div className="h-8 w-8 rounded-md bg-warm-primary flex items-center justify-center text-white text-lg font-bold">
                 D
               </div>
-              <span className="text-gray-900 dark:text-white font-bold text-xl">DApp Wallet</span>
+              <span className="text-warm-text dark:text-white font-bold text-xl">DApp Wallet</span>
             </Link>
           </div>
 
@@ -45,8 +45,8 @@ export default function Header() {
                   href={item.href}
                   className={`px-3 py-2 rounded-md text-sm font-medium ${
                     isActive
-                      ? 'bg-clay-500 text-white'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-100'
+                      ? 'bg-warm-primary text-white'
+                      : 'text-warm-text dark:text-gray-300 hover:bg-warm-bg dark:hover:bg-dark-100'
                   }`}
                   aria-current={isActive ? 'page' : undefined}
                 >
@@ -63,7 +63,7 @@ export default function Header() {
             
             {/* Mobile Menu Button */}
             <button
-              className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-100"
+              className="md:hidden p-2 rounded-md text-warm-text dark:text-gray-300 hover:bg-warm-bg dark:hover:bg-dark-100"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-expanded={mobileMenuOpen}
               aria-label="Toggle navigation menu"
@@ -94,8 +94,8 @@ export default function Header() {
                   href={item.href}
                   className={`block px-3 py-2 rounded-md text-base font-medium ${
                     isActive
-                      ? 'bg-clay-500 text-white'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-100'
+                      ? 'bg-warm-primary text-white'
+                      : 'text-warm-text dark:text-gray-300 hover:bg-warm-bg dark:hover:bg-dark-100'
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                   aria-current={isActive ? 'page' : undefined}

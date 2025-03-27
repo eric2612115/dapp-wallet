@@ -13,7 +13,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={clsx(
-          'bg-white dark:bg-dark-200 rounded-lg border border-gray-200 dark:border-dark-100 shadow-sm overflow-hidden',
+          'bg-warm-paper dark:bg-dark-200 rounded-lg border border-warm-divider dark:border-dark-100 shadow-sm overflow-hidden',
           className
         )}
         {...props}
@@ -37,7 +37,7 @@ const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
       <div
         ref={ref}
         className={clsx(
-          'px-6 py-4 border-b border-gray-200 dark:border-dark-100 bg-gray-50 dark:bg-dark-200',
+          'px-6 py-4 border-b border-warm-divider dark:border-dark-100 bg-warm-paper dark:bg-dark-200',
           className
         )}
         {...props}
@@ -61,7 +61,7 @@ const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
       <h3
         ref={ref}
         className={clsx(
-          'text-lg font-medium text-gray-900 dark:text-white',
+          'text-lg font-medium text-warm-text dark:text-white',
           className
         )}
         {...props}
@@ -85,7 +85,7 @@ const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionPr
       <p
         ref={ref}
         className={clsx(
-          'text-sm text-gray-500 dark:text-gray-400 mt-1',
+          'text-sm text-warm-textSecondary dark:text-gray-400 mt-1',
           className
         )}
         {...props}
@@ -133,7 +133,7 @@ const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
       <div
         ref={ref}
         className={clsx(
-          'px-6 py-4 bg-gray-50 dark:bg-dark-200 border-t border-gray-200 dark:border-dark-100',
+          'px-6 py-4 bg-warm-paper dark:bg-dark-200 border-t border-warm-divider dark:border-dark-100',
           className
         )}
         {...props}

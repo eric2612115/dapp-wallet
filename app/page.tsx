@@ -103,7 +103,7 @@ export default function HomePage() {
     setSortDirection('desc'); // Reset sort direction to default
   };
 
-  // Open deposit dialog
+  // Open deposit dialog - safely handle the case when no asset is provided
   const handleDepositOpen = (asset?: Asset) => {
     setSelectedAsset(asset || null);
     setDepositOpen(true);
@@ -198,23 +198,23 @@ export default function HomePage() {
   return (
     <div>
       <div className="mb-4">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+        <h1 className="text-2xl font-bold text-warm-text dark:text-white mb-1">
           DApp Wallet Dashboard
         </h1>
-        <p className="text-gray-600 dark:text-gray-300">
+        <p className="text-warm-textSecondary dark:text-gray-300">
           Manage your assets, transfers, and transactions across all your wallets
         </p>
       </div>
 
       {!isConnected ? (
-        <div className="text-center py-8 flex flex-col items-center justify-center bg-white dark:bg-dark-200 rounded-lg border border-gray-200 dark:border-dark-100">
-          <div className="bg-clay-100 dark:bg-clay-900/30 text-clay-600 dark:text-clay-300 w-16 h-16 flex items-center justify-center rounded-full mb-2">
+        <div className="text-center py-8 flex flex-col items-center justify-center bg-warm-paper dark:bg-dark-200 rounded-lg border border-warm-divider dark:border-dark-100">
+          <div className="bg-warm-bg dark:bg-warm-primary/30 text-warm-primary dark:text-warm-secondary w-16 h-16 flex items-center justify-center rounded-full mb-2">
             <WalletIcon fontSize="large" />
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-xl font-semibold text-warm-text dark:text-white mb-2">
             Please connect your wallet to view your assets
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 max-w-md mb-6">
+          <p className="text-warm-textSecondary dark:text-gray-400 max-w-md mb-6">
             Connect your wallet to manage your assets, view your portfolio, and execute transfers between wallets.
           </p>
         </div>
@@ -281,7 +281,7 @@ export default function HomePage() {
 
           {/* Asset table */}
           {loadingAssets ? (
-            <div className="mb-4 p-3 flex justify-center text-gray-500 dark:text-gray-400">
+            <div className="mb-4 p-3 flex justify-center text-warm-textSecondary dark:text-gray-400">
               Loading assets...
             </div>
           ) : (
@@ -303,7 +303,7 @@ export default function HomePage() {
 
           {/* Transaction history */}
           {loadingTransactions ? (
-            <div className="mb-4 p-3 flex justify-center text-gray-500 dark:text-gray-400">
+            <div className="mb-4 p-3 flex justify-center text-warm-textSecondary dark:text-gray-400">
               Loading transactions...
             </div>
           ) : (
@@ -316,12 +316,12 @@ export default function HomePage() {
             />
           )}
 
-          {/* Deposit dialog */}
+          {/* Deposit dialog - with safe handling of undefined values */}
           <DepositDialog 
             onClose={handleDepositClose} 
             onSubmit={handleDepositSubmit} 
             open={depositOpen} 
-            preSelectedAmount={selectedAsset?.balance.toString()}
+            preSelectedAmount={selectedAsset?.balance?.toString()} // Add null check with ?. operator
             preSelectedToken={selectedAsset?.symbol}
             selectedWalletName={walletType === 'multisig' && selectedMultisigWalletAddress
               ? relatedMultisigWallets.find(wallet => wallet.multisig_address === selectedMultisigWalletAddress)?.name

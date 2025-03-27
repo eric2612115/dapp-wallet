@@ -9,7 +9,7 @@ interface TableProps extends React.TableHTMLAttributes<HTMLTableElement> {
 const Table = React.forwardRef<HTMLTableElement, TableProps>(
   ({ children, className, ...props }, ref) => {
     return (
-      <div className="relative overflow-x-auto shadow-sm rounded-lg border border-gray-200 dark:border-dark-100">
+      <div className="relative overflow-x-auto shadow-sm rounded-lg border border-warm-divider dark:border-dark-100">
         <table
           ref={ref}
           className={clsx(
@@ -37,7 +37,7 @@ const TableHeader = React.forwardRef<HTMLTableSectionElement, TableHeaderProps>(
       <thead
         ref={ref}
         className={clsx(
-          'text-xs uppercase bg-gray-50 dark:bg-dark-200 text-gray-700 dark:text-gray-400',
+          'text-xs uppercase bg-warm-paper dark:bg-dark-200 text-warm-textSecondary dark:text-gray-400',
           className
         )}
         {...props}
@@ -60,7 +60,7 @@ const TableBody = React.forwardRef<HTMLTableSectionElement, TableBodyProps>(
       <tbody
         ref={ref}
         className={clsx(
-          'bg-white dark:bg-dark-200 divide-y divide-gray-200 dark:divide-dark-100',
+          'bg-warm-paper dark:bg-dark-200 divide-y divide-warm-divider dark:divide-dark-100',
           className
         )}
         {...props}
@@ -83,7 +83,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
       <tr
         ref={ref}
         className={clsx(
-          'hover:bg-gray-50 dark:hover:bg-dark-100',
+          'hover:bg-warm-bg dark:hover:bg-dark-100',
           className
         )}
         {...props}
@@ -106,7 +106,7 @@ const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
       <td
         ref={ref}
         className={clsx(
-          'px-6 py-4 text-gray-900 dark:text-gray-200',
+          'px-6 py-4 text-warm-text dark:text-gray-200',
           className
         )}
         {...props}
@@ -152,7 +152,7 @@ const TableFooter = React.forwardRef<HTMLTableSectionElement, TableFooterProps>(
       <tfoot
         ref={ref}
         className={clsx(
-          'bg-gray-50 dark:bg-dark-200 border-t border-gray-200 dark:border-dark-100',
+          'bg-warm-paper dark:bg-dark-200 border-t border-warm-divider dark:border-dark-100',
           className
         )}
         {...props}

@@ -30,16 +30,16 @@ const WalletOverview: React.FC<WalletOverviewProps> = ({ wallet, onDeposit }) =>
     <Card className="mb-6">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+          <h3 className="text-lg font-medium text-warm-text dark:text-white">
             Wallet Overview
           </h3>
           <div className="flex items-center">
-            <p className="text-sm text-gray-600 dark:text-gray-300">
+            <p className="text-sm text-warm-textSecondary dark:text-gray-300">
               {wallet.address.slice(0, 10)}...{wallet.address.slice(-4)}
             </p>
             <button
               onClick={() => copyAddress(wallet.address)}
-              className="ml-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              className="ml-1 text-warm-textSecondary hover:text-warm-text dark:hover:text-gray-200"
               aria-label={copiedAddress ? "Copied" : "Copy address"}
             >
               {copiedAddress ? (
@@ -51,7 +51,7 @@ const WalletOverview: React.FC<WalletOverviewProps> = ({ wallet, onDeposit }) =>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <p className="text-2xl font-semibold text-warm-text dark:text-white">
             ${wallet.totalValue.toLocaleString(undefined, {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2

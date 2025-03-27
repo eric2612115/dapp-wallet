@@ -1,11 +1,10 @@
 // components/portfolio/CreateMultisigModal.tsx
 import React, { useState } from 'react';
-import {
-  Box, Button, CircularProgress, Dialog, 
-  DialogActions, DialogContent, DialogTitle, Typography,
-  Alert, TextField
-} from '@mui/material';
 import { useAccount, useChainId } from 'wagmi';
+import { Modal, ModalBody, ModalFooter } from '@/components/ui/Modal';
+import { Alert, AlertDescription } from '@/components/ui/Alert';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
 
 interface CreateMultisigModalProps {
   open: boolean;
@@ -58,87 +57,74 @@ const CreateMultisigModal: React.FC<CreateMultisigModalProps> = ({
   };
 
   return (
-    <Dialog 
-      fullWidth 
-      maxWidth="sm" 
-      onClose={loading ? undefined : handleClose}
-      open={open}
+    <Modal 
+      isOpen={open} 
+      onClose={loading ? () => {} : handleClose}
+      title="Create New Multi-signature Wallet"
+      maxWidth="md"
     >
-      <DialogTitle>Create New Multi-signature Wallet</DialogTitle>
-      
-      <DialogContent>
-        <Box sx={{ mt: 2 }}>
-          <TextField
-            autoFocus
-            disabled={loading}
-            fullWidth
+      <ModalBody>
+        <div className="mt-4">
+          <Input
             label="Wallet Name"
-            margin="normal"
-            onChange={(e) => setWalletName(e.target.value)}
             placeholder="My Multi-sig Wallet"
             value={walletName}
+            onChange={(e) => setWalletName(e.target.value)}
+            disabled={loading}
+            fullWidth
           />
 
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">
             This will create a new multi-signature wallet where you and your AI assistant
             both have control. All transactions from this wallet will require approval.
-          </Typography>
+          </p>
 
           {/* Chain info */}
-          <Box 
-            sx={{ 
-              mt: 2, 
-              p: 2, 
-              bgcolor: 'background.paper', 
-              borderRadius: 1,
-              border: '1px solid',
-              borderColor: 'divider'
-            }}
-          >
-            <Typography variant="subtitle2">Wallet Details</Typography>
-            <Typography variant="body2" color="text.secondary">
+          <div className="mt-4 p-4 bg-white dark:bg-dark-200 border border-gray-200 dark:border-dark-100 rounded-md">
+            <h4 className="text-sm font-medium text-gray-900 dark:text-white">Wallet Details</h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Network: {chainId ? 
                 chainId === 1 ? 'Ethereum Mainnet' : 
                 chainId === 137 ? 'Polygon' : 
                 chainId === 56 ? 'BNB Smart Chain' : 
                 `Chain ID: ${chainId}` : 'Unknown'
               }
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Owner: {address ? 
                 `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : 
                 'Not connected'
               }
-            </Typography>
-          </Box>
+            </p>
+          </div>
 
           {/* Error message */}
           {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {error}
+            <Alert variant="error" className="mt-4">
+              <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-        </Box>
-      </DialogContent>
+        </div>
+      </ModalBody>
       
-      <DialogActions sx={{ px: 3, pb: 3 }}>
+      <ModalFooter>
         <Button 
-          disabled={loading} 
+          variant="default"
           onClick={handleClose} 
-          variant="outlined"
+          disabled={loading}
         >
           Cancel
         </Button>
         <Button 
-          disabled={loading || !address} 
-          onClick={handleCreateWallet} 
-          variant="contained"
-          startIcon={loading ? <CircularProgress size={20} /> : null}
+          variant="primary"
+          onClick={handleCreateWallet}
+          disabled={loading || !address}
+          isLoading={loading}
         >
           Create Wallet
         </Button>
-      </DialogActions>
-    </Dialog>
+      </ModalFooter>
+    </Modal>
   );
 };
 

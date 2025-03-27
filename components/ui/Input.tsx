@@ -25,7 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
           <label 
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" 
+            className="block text-sm font-medium text-warm-text dark:text-gray-300 mb-1" 
             htmlFor={props.id}
           >
             {label}
@@ -33,7 +33,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative">
           {startIcon && (
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-warm-textSecondary">
               {startIcon}
             </div>
           )}
@@ -41,11 +41,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             type={type}
             className={clsx(
-              'block border border-gray-300 dark:border-dark-100 rounded-md shadow-sm',
-              'focus:outline-none focus:ring-clay-500 dark:focus:ring-clay-400 focus:border-clay-500 dark:focus:border-clay-400',
-              'bg-white dark:bg-dark-300 text-gray-700 dark:text-gray-200',
-              'placeholder-gray-400 dark:placeholder-gray-500',
-              'disabled:bg-gray-100 dark:disabled:bg-dark-200 disabled:cursor-not-allowed disabled:text-gray-500 dark:disabled:text-gray-400',
+              'block border border-warm-divider dark:border-dark-100 rounded-md shadow-sm',
+              'focus:outline-none focus:ring-warm-primary dark:focus:ring-warm-primary focus:border-warm-primary dark:focus:border-warm-primary',
+              'bg-warm-paper dark:bg-dark-300 text-warm-text dark:text-gray-200',
+              'placeholder-warm-textSecondary/70 dark:placeholder-gray-500',
+              'disabled:bg-warm-bg dark:disabled:bg-dark-200 disabled:cursor-not-allowed disabled:text-warm-textSecondary dark:disabled:text-gray-400',
               startIcon ? 'pl-10' : 'pl-3',
               endIcon ? 'pr-10' : 'pr-3',
               'py-2',
@@ -56,7 +56,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {endIcon && (
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-warm-textSecondary">
               {endIcon}
             </div>
           )}

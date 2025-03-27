@@ -29,11 +29,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ...props 
   }, ref) => {
     const variantClasses = {
-      default: 'bg-white dark:bg-dark-200 border border-gray-300 dark:border-dark-100 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-dark-100',
-      primary: 'bg-clay-500 hover:bg-clay-600 text-white border border-transparent',
+      default: 'bg-warm-paper dark:bg-dark-200 border border-warm-divider dark:border-dark-100 text-warm-text dark:text-gray-200 hover:bg-warm-bg dark:hover:bg-dark-100',
+      primary: 'bg-warm-primary hover:bg-warm-primary/90 text-white border border-transparent',
       secondary: 'bg-blue-600 hover:bg-blue-700 text-white border border-transparent',
-      outline: 'bg-transparent border border-clay-500 dark:border-clay-400 text-clay-500 dark:text-clay-400 hover:bg-clay-50 dark:hover:bg-clay-900/20',
-      ghost: 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-100 border-transparent',
+      outline: 'bg-transparent border border-warm-primary dark:border-warm-primary/80 text-warm-primary dark:text-warm-primary/80 hover:bg-warm-primary/10 dark:hover:bg-warm-primary/20',
+      ghost: 'bg-transparent text-warm-text dark:text-gray-300 hover:bg-warm-bg dark:hover:bg-dark-100 border-transparent',
       danger: 'bg-red-600 hover:bg-red-700 text-white border border-transparent',
     };
     
@@ -47,7 +47,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={clsx(
-          'font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-clay-500 dark:focus:ring-clay-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
+          'font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-warm-primary dark:focus:ring-warm-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
           variantClasses[variant],
           sizeClasses[size],
           fullWidth ? 'w-full' : '',
