@@ -1,37 +1,27 @@
 // components/portfolio/AssetTable.tsx
 import React, { useState } from 'react';
 import {
-  alpha, Avatar, Box, Button, Chip, Paper, Table, 
-  TableBody, TableCell, TableContainer, TableHead, 
-  TableRow, Tooltip, Typography, useTheme,
-  Pagination
-} from '@mui/material';
-import { 
-  Add as AddIcon, 
-  ArrowDownward as ArrowDownwardIcon, 
+  Add as AddIcon,
+  ArrowDownward as ArrowDownwardIcon,
   ArrowUpward as ArrowUpwardIcon,
   SwapHoriz as SwapIcon,
   CallMade as WithdrawIcon,
   Warning as WarningIcon
 } from '@mui/icons-material';
-
-// Asset type definition with extended properties
-export interface Asset {
-  id: string;
-  name: string;
-  symbol: string;
-  balance: number;
-  price: number;
-  value: number;
-  change24h: number;
-  logoUrl?: string;
-  // Additional fields
-  chain?: string;
-  chainIndex?: string;
-  tokenAddress?: string;    // Token contract address needed for ERC20 transfers
-  decimals?: number;        // Token decimals needed for ERC20 transfers (defaults to 18)
-  isWhitelisted?: boolean;  // For multi-signature wallet assets
-}
+import { 
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableRow, 
+  TableCell, 
+  TableHead 
+} from '@/components/ui/Table';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import Badge from '@/components/ui/Badge';
+import Avatar from '@/components/ui/Avatar';
+import Chip from '@/components/ui/Chip';
+import type { Asset } from '@/types/assets';
 
 interface AssetTableProps {
   assets: Asset[];
@@ -55,7 +45,6 @@ const AssetTable: React.FC<AssetTableProps> = ({
   onWithdraw,
   selectedWalletName
 }) => {
-  const theme = useTheme();
   // Pagination state
   const [page, setPage] = useState(1);
   const itemsPerPage = 5; // Fixed number of items per page
@@ -64,7 +53,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
   const totalPages = Math.ceil(assets.length / itemsPerPage);
 
   // Handle pagination change
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  const handlePageChange = (value: number) => {
     setPage(value);
   };
 
@@ -73,349 +62,289 @@ const AssetTable: React.FC<AssetTableProps> = ({
   const endIndex = startIndex + itemsPerPage;
   const currentAssets = assets.slice(startIndex, endIndex);
 
+  // Title based on wallet type
+  const title = walletType === 'personal'
+    ? 'Personal Wallet Assets'
+    : selectedWalletName
+      ? `${selectedWalletName} Assets`
+      : 'Multi-Signature Wallet Assets';
+    
+  // Subtitle based on wallet type
+  const subtitle = walletType === 'personal'
+    ? 'Assets in your personal wallet'
+    : selectedWalletName
+      ? `Assets in ${selectedWalletName}`
+      : 'Assets in your multi-signature wallet';
+
   return (
-    <Paper 
-      elevation={0} 
-      sx={{ 
-        mb: 4, 
-        border: `1px solid ${theme.palette.divider}`,
-        borderRadius: 2,
-        overflow: 'hidden'
-      }}
-    >
-      <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
-        <Typography fontWeight={600} variant="h6">
-          {walletType === 'personal' 
-            ? 'Personal Wallet Assets' 
-            : selectedWalletName 
-              ? `${selectedWalletName} Assets` 
-              : 'Multi-Signature Wallet Assets'
-          }
-        </Typography>
-        <Typography color="text.secondary" variant="body2">
-          {walletType === 'personal' 
-            ? 'Assets in your personal wallet' 
-            : selectedWalletName 
-              ? `Assets in ${selectedWalletName}` 
-              : 'Assets in your multi-signature wallet'
-          }
-        </Typography>
-      </Box>
-      <TableContainer>
+    <Card className="mb-8">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{subtitle}</CardDescription>
+        </div>
+      </CardHeader>
+      
+      <CardContent>
         <Table>
-          <TableHead>
-            <TableRow sx={{ bgcolor: alpha(theme.palette.background.default, 0.6) }}>
-              <TableCell>
-                <Box 
-                  onClick={() => onSort('name')}
-                  sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    cursor: 'pointer' 
-                  }}
-                >
+          <TableHeader>
+            <TableRow>
+              <TableHead onClick={() => onSort('name')} className="cursor-pointer">
+                <div className="flex items-center">
                   Asset
                   {sortColumn === 'name' && (
                     sortDirection === 'asc' ? 
-                      <ArrowUpwardIcon fontSize="small" sx={{ ml: 0.5 }} /> : 
-                      <ArrowDownwardIcon fontSize="small" sx={{ ml: 0.5 }} />
+                      <ArrowUpwardIcon fontSize="small" className="ml-1" /> : 
+                      <ArrowDownwardIcon fontSize="small" className="ml-1" />
                   )}
-                </Box>
-              </TableCell>
-              <TableCell>
-                <Box 
-                  onClick={() => onSort('chain')}
-                  sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    cursor: 'pointer' 
-                  }}
-                >
+                </div>
+              </TableHead>
+              <TableHead onClick={() => onSort('chain')} className="cursor-pointer">
+                <div className="flex items-center">
                   Chain
                   {sortColumn === 'chain' && (
                     sortDirection === 'asc' ? 
-                      <ArrowUpwardIcon fontSize="small" sx={{ ml: 0.5 }} /> : 
-                      <ArrowDownwardIcon fontSize="small" sx={{ ml: 0.5 }} />
+                      <ArrowUpwardIcon fontSize="small" className="ml-1" /> : 
+                      <ArrowDownwardIcon fontSize="small" className="ml-1" />
                   )}
-                </Box>
-              </TableCell>
-              <TableCell align="right">
-                <Box 
-                  onClick={() => onSort('balance')}
-                  sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'flex-end', 
-                    cursor: 'pointer' 
-                  }}
-                >
+                </div>
+              </TableHead>
+              <TableHead onClick={() => onSort('balance')} className="cursor-pointer text-right">
+                <div className="flex items-center justify-end">
                   Balance
                   {sortColumn === 'balance' && (
                     sortDirection === 'asc' ? 
-                      <ArrowUpwardIcon fontSize="small" sx={{ ml: 0.5 }} /> : 
-                      <ArrowDownwardIcon fontSize="small" sx={{ ml: 0.5 }} />
+                      <ArrowUpwardIcon fontSize="small" className="ml-1" /> : 
+                      <ArrowDownwardIcon fontSize="small" className="ml-1" />
                   )}
-                </Box>
-              </TableCell>
-              <TableCell align="right">
-                <Box 
-                  onClick={() => onSort('price')}
-                  sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'flex-end', 
-                    cursor: 'pointer' 
-                  }}
-                >
+                </div>
+              </TableHead>
+              <TableHead onClick={() => onSort('price')} className="cursor-pointer text-right">
+                <div className="flex items-center justify-end">
                   Price
                   {sortColumn === 'price' && (
                     sortDirection === 'asc' ? 
-                      <ArrowUpwardIcon fontSize="small" sx={{ ml: 0.5 }} /> : 
-                      <ArrowDownwardIcon fontSize="small" sx={{ ml: 0.5 }} />
+                      <ArrowUpwardIcon fontSize="small" className="ml-1" /> : 
+                      <ArrowDownwardIcon fontSize="small" className="ml-1" />
                   )}
-                </Box>
-              </TableCell>
-              <TableCell align="right">
-                <Box 
-                  onClick={() => onSort('value')}
-                  sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'flex-end', 
-                    cursor: 'pointer' 
-                  }}
-                >
+                </div>
+              </TableHead>
+              <TableHead onClick={() => onSort('value')} className="cursor-pointer text-right">
+                <div className="flex items-center justify-end">
                   Value
                   {sortColumn === 'value' && (
                     sortDirection === 'asc' ? 
-                      <ArrowUpwardIcon fontSize="small" sx={{ ml: 0.5 }} /> : 
-                      <ArrowDownwardIcon fontSize="small" sx={{ ml: 0.5 }} />
+                      <ArrowUpwardIcon fontSize="small" className="ml-1" /> : 
+                      <ArrowDownwardIcon fontSize="small" className="ml-1" />
                   )}
-                </Box>
-              </TableCell>
-              <TableCell align="right">
-                <Box 
-                  onClick={() => onSort('change24h')}
-                  sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'flex-end', 
-                    cursor: 'pointer' 
-                  }}
-                >
+                </div>
+              </TableHead>
+              <TableHead onClick={() => onSort('change24h')} className="cursor-pointer text-right">
+                <div className="flex items-center justify-end">
                   24h Change
                   {sortColumn === 'change24h' && (
                     sortDirection === 'asc' ? 
-                      <ArrowUpwardIcon fontSize="small" sx={{ ml: 0.5 }} /> : 
-                      <ArrowDownwardIcon fontSize="small" sx={{ ml: 0.5 }} />
+                      <ArrowUpwardIcon fontSize="small" className="ml-1" /> : 
+                      <ArrowDownwardIcon fontSize="small" className="ml-1" />
                   )}
-                </Box>
-              </TableCell>
-              <TableCell align="center">Actions</TableCell>
+                </div>
+              </TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
-          </TableHead>
+          </TableHeader>
           <TableBody>
             {assets.length === 0 ? (
               <TableRow>
-                <TableCell align="center" colSpan={7}>
-                  <Typography sx={{ py: 4 }} variant="body1">
-                    No assets found
-                  </Typography>
+                <TableCell colSpan={7} className="text-center py-10">
+                  No assets found
                 </TableCell>
               </TableRow>
             ) : (
               currentAssets.map((asset) => (
-                <TableRow key={asset.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableRow key={asset.id}>
                   <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <div className="flex items-center">
                       <Avatar 
                         src={asset.logoUrl}
-                        sx={{ 
-                          width: 40, 
-                          height: 40,
-                          bgcolor: alpha(theme.palette.primary.main, 0.1),
-                          fontSize: '1rem',
-                          mr: 2
-                        }}
-                      >
-                        {!asset.logoUrl && asset.symbol.substring(0, 1)}
-                      </Avatar>
-                      <Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <Typography fontWeight={500} variant="body1">
+                        initials={asset.symbol.substring(0, 1)}
+                        size="sm"
+                        className="mr-3"
+                      />
+                      <div>
+                        <div className="flex items-center">
+                          <div className="font-medium text-gray-900 dark:text-white">
                             {asset.name}
-                          </Typography>
+                          </div>
                           {/* For multisig wallet: show whitelist status */}
                           {walletType === 'multisig' && (
-                            <Tooltip 
-                              title={asset.isWhitelisted 
-                                ? "Whitelisted token: can be withdrawn without additional approvals" 
-                                : "Non-whitelisted token: requires additional approvals to withdraw"}
-                            >
-                              <Box sx={{ display: 'inline-flex', ml: 0.5 }}>
-                                {asset.isWhitelisted ? (
-                                  <Chip 
-                                    label="Whitelisted" 
-                                    size="small"
-                                    sx={{ 
-                                      bgcolor: alpha(theme.palette.success.main, 0.1),
-                                      color: theme.palette.success.main,
-                                      height: 20,
-                                      fontSize: '0.7rem'
-                                    }}
-                                  />
-                                ) : (
-                                  <WarningIcon 
-                                    color="warning" 
-                                    fontSize="small" 
-                                    sx={{ fontSize: '1rem' }} 
-                                  />
-                                )}
-                              </Box>
-                            </Tooltip>
+                            <div className="ml-2">
+                              {asset.isWhitelisted ? (
+                                <Chip 
+                                  size="sm"
+                                  variant="success"
+                                >
+                                  Whitelisted
+                                </Chip>
+                              ) : (
+                                <WarningIcon 
+                                  className="text-yellow-500 dark:text-yellow-400"
+                                  fontSize="small"
+                                  titleAccess="Non-whitelisted token: requires additional approvals to withdraw"
+                                />
+                              )}
+                            </div>
                           )}
-                        </Box>
-                        <Typography color="text.secondary" variant="caption">
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
                           {asset.symbol}
-                        </Typography>
-                      </Box>
-                    </Box>
+                        </div>
+                      </div>
+                    </div>
                   </TableCell>
                   <TableCell>
                     {asset.chain && (
-                      <Chip 
-                        label={asset.chain} 
-                        size="small"
-                        sx={{ 
-                          bgcolor: alpha(theme.palette.primary.main, 0.05),
-                          color: theme.palette.text.primary
-                        }}
-                      />
+                      <Badge variant="default">
+                        {asset.chain}
+                      </Badge>
                     )}
                   </TableCell>
-                  <TableCell align="right">
-                    <Typography fontWeight={500} variant="body1">
-                      {asset.balance.toLocaleString(undefined, { maximumFractionDigits: 6 })} {asset.symbol}
-                    </Typography>
+                  <TableCell className="text-right font-medium">
+                    {asset.balance.toLocaleString(undefined, { maximumFractionDigits: 6 })} {asset.symbol}
                   </TableCell>
-                  <TableCell align="right">
-                    <Typography variant="body1">
-                      ${asset.price.toLocaleString(undefined, { maximumFractionDigits: 6 })}
-                    </Typography>
+                  <TableCell className="text-right">
+                    ${asset.price.toLocaleString(undefined, { maximumFractionDigits: 6 })}
                   </TableCell>
-                  <TableCell align="right">
-                    <Typography fontWeight={500} variant="body1">
-                      ${asset.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                    </Typography>
+                  <TableCell className="text-right font-medium">
+                    ${asset.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                   </TableCell>
-                  <TableCell align="right">
-                    <Chip 
-                      label={`${asset.change24h > 0 ? '+' : ''}${asset.change24h}%`}
-                      size="small"
-                      sx={{ 
-                        bgcolor: asset.change24h > 0 
-                          ? alpha(theme.palette.success.main, 0.1)
-                          : asset.change24h < 0 
-                            ? alpha(theme.palette.error.main, 0.1)
-                            : alpha(theme.palette.grey[200], 0.5),
-                        color: asset.change24h > 0 
-                          ? theme.palette.success.main
-                          : asset.change24h < 0 
-                            ? theme.palette.error.main
-                            : theme.palette.text.primary,
-                        fontWeight: 500
-                      }}
-                    />
+                  <TableCell className="text-right">
+                    <Badge 
+                      variant={asset.change24h > 0 ? 'success' : asset.change24h < 0 ? 'danger' : 'default'}
+                    >
+                      {asset.change24h > 0 ? '+' : ''}{asset.change24h}%
+                    </Badge>
                   </TableCell>
-                  <TableCell align="center">
-                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
+                  <TableCell className="text-center">
+                    <div className="flex justify-center space-x-2">
                       {/* Different actions based on wallet type */}
                       {walletType === 'personal' ? (
                         // Personal wallet: Swap and Deposit buttons
                         <>
                           <Button 
-                            color="primary" 
-                            size="small"
+                            variant="outline" 
+                            size="sm"
                             startIcon={<SwapIcon />}
-                            sx={{
-                              borderRadius: 1.5,
-                              borderColor: theme.palette.primary.main
-                            }}
-                            variant="outlined"
                           >
                             Swap
                           </Button>
                           {onDeposit && (
                             <Button 
-                              color="success" 
                               onClick={() => onDeposit(asset)}
-                              size="small"
+                              variant="outline" 
+                              size="sm"
                               startIcon={<AddIcon />}
-                              sx={{
-                                borderRadius: 1.5,
-                              }}
-                              variant="outlined"
                             >
                               Deposit
                             </Button>
                           )}
                         </>
                       ) : (
-                      // Multi-signature wallet: Withdraw button
+                        // Multi-signature wallet: Withdraw button
                         <>
                           <Button 
-                            color="primary" 
-                            size="small"
+                            variant="outline" 
+                            size="sm"
                             startIcon={<SwapIcon />}
-                            sx={{
-                              borderRadius: 1.5,
-                              borderColor: theme.palette.primary.main
-                            }}
-                            variant="outlined"
                           >
                             Swap
                           </Button>
                           {onWithdraw && (
                             <Button 
-                              color="warning" 
                               onClick={() => onWithdraw(asset)}
-                              size="small"
+                              variant="outline" 
+                              size="sm"
                               startIcon={<WithdrawIcon />}
-                              sx={{
-                                borderRadius: 1.5,
-                              }}
-                              variant="outlined"
                             >
                               Withdraw
                             </Button>
                           )}
                         </>
                       )}
-                    </Box>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
-      </TableContainer>
-      
-      {/* Pagination */}
-      {assets.length > 0 && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-          <Pagination 
-            color="primary"
-            count={totalPages}
-            onChange={handlePageChange}
-            page={page}
-            shape="rounded"
-            showFirstButton
-            showLastButton
-            size="medium"
-          />
-        </Box>
-      )}
-    </Paper>
+        
+        {/* Pagination */}
+        {assets.length > 0 && (
+          <div className="px-6 py-4 flex justify-center">
+            <div className="flex space-x-1">
+              <Button
+                onClick={() => handlePageChange(1)}
+                disabled={page === 1}
+                variant="default"
+                size="sm"
+              >
+                First
+              </Button>
+              <Button
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page === 1}
+                variant="default"
+                size="sm"
+              >
+                Prev
+              </Button>
+              
+              {/* Page numbers */}
+              {Array.from({ length: Math.min(5, totalPages) }).map((_, idx) => {
+                let pageNum;
+                if (totalPages <= 5) {
+                  pageNum = idx + 1;
+                } else if (page <= 3) {
+                  pageNum = idx + 1;
+                } else if (page >= totalPages - 2) {
+                  pageNum = totalPages - 4 + idx;
+                } else {
+                  pageNum = page - 2 + idx;
+                }
+                
+                return (
+                  <Button
+                    key={idx}
+                    onClick={() => handlePageChange(pageNum)}
+                    variant={page === pageNum ? "primary" : "default"}
+                    size="sm"
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
+              
+              <Button
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page === totalPages}
+                variant="default"
+                size="sm"
+              >
+                Next
+              </Button>
+              <Button
+                onClick={() => handlePageChange(totalPages)}
+                disabled={page === totalPages}
+                variant="default"
+                size="sm"
+              >
+                Last
+              </Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

@@ -48,7 +48,7 @@ export function useAssets(
         value: parseFloat(item.value) || 0,
         change24h: 0, // API doesn't provide 24h change, default to 0
         chain: item.chain,
-        chainIndex: item.chainIndex,
+        chainIndex: item.chainIndex?.toString(), // Convert to string to fix type issues
         tokenAddress: item.tokenAddress,
         decimals: item.decimals,
         logoUrl: item.icon || undefined,

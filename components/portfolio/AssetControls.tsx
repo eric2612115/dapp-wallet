@@ -1,20 +1,13 @@
 // components/portfolio/AssetControls.tsx
 import React from 'react';
 import {
-  Box,
-  Button,
-  CircularProgress,
-  IconButton,
-  InputAdornment,
-  TextField,
-  useTheme
-} from '@mui/material';
-import {
   Add as AddIcon,
   FilterList as FilterListIcon,
   Refresh as RefreshIcon,
   Search as SearchIcon
 } from '@mui/icons-material';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
 
 interface AssetControlsProps {
   search: string;
@@ -31,73 +24,51 @@ const AssetControls: React.FC<AssetControlsProps> = ({
   handleRefresh,
   handleDepositOpen
 }) => {
-  const theme = useTheme();
-  
   return (
-    <Box 
-      sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        mb: 3,
-        flexDirection: { xs: 'column', sm: 'row' },
-        gap: 2
-      }}
-    >
-      <TextField
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-        }}
+    <div className="flex justify-between items-center mb-4 flex-col sm:flex-row gap-3">
+      <Input
+        value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Search assets..."
-        size="small"
-        sx={{ 
-          flexGrow: 1, 
-          maxWidth: { xs: '100%', sm: 300 },
-          '& .MuiOutlinedInput-root': {
-            borderRadius: 2,
-          }
-        }}
-        value={search}
-        variant="outlined"
+        startIcon={<SearchIcon className="h-5 w-5 text-gray-400" />}
+        className="max-w-xs"
       />
-      
-      <Box sx={{ display: 'flex', gap: 1 }}>
-        <IconButton 
-          disabled={refreshing}
+
+      <div className="flex gap-2">
+        <Button
           onClick={handleRefresh}
-          size="small"
-          sx={{ 
-            borderRadius: 2,
-            border: `1px solid ${theme.palette.divider}`,
-            p: 1
-          }}
+          disabled={refreshing}
+          variant="ghost"
+          size="md"
+          className="p-2"
+          aria-label="Refresh assets"
         >
-          {refreshing ? <CircularProgress size={20} /> : <RefreshIcon />}
-        </IconButton>
+          {refreshing ? (
+            <svg className="animate-spin h-5 w-5 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          ) : (
+            <RefreshIcon className="h-5 w-5" />
+          )}
+        </Button>
         
         <Button 
-          startIcon={<FilterListIcon />} 
-          sx={{ borderRadius: 2 }}
-          variant="outlined"
+          variant="default"
+          startIcon={<FilterListIcon />}
         >
           Filter
         </Button>
         
         <Button 
-          color="primary" 
           onClick={handleDepositOpen}
+          variant="primary"
           startIcon={<AddIcon />}
-          sx={{ borderRadius: 2 }}
-          variant="contained"
         >
           Deposit
         </Button>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 

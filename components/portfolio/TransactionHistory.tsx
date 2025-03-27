@@ -1,29 +1,25 @@
 // components/portfolio/TransactionHistory.tsx
 import React, { useState } from 'react';
-import {
-  alpha, Box, Chip, IconButton, Paper, Table, TableBody, 
-  TableCell, TableContainer, TableHead, TablePagination, TableRow, 
-  Tooltip, Typography, useTheme
-} from '@mui/material';
-import { 
-  Launch as LaunchIcon
-} from '@mui/icons-material';
+import { Launch as LaunchIcon } from '@mui/icons-material';
 import { getTxExplorerUrl } from '../../lib/utils/explorerUtils';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { 
+  Table, 
+  TableHeader, 
+  TableBody, 
+  TableRow, 
+  TableCell, 
+  TableHead 
+} from '@/components/ui/Table';
+import Badge from '@/components/ui/Badge';
+import Button from '@/components/ui/Button';
+import Chip from '@/components/ui/Chip';
 
-// Transaction history type definition
-export interface Transaction {
-  hash: string;
-  type: 'Swap' | 'Send' | 'Receive';
-  from: string;
-  to: string;
-  amount: string;
-  value: string;
-  timestamp: string;
-  status: 'pending' | 'completed' | 'failed' | 'success';
-  // Additional fields from API
-  chain?: string;
-  details?: string;
-  chainIndex?: string; // Chain ID for determining explorer
+import type { Transaction as TransactionType } from '@/types/transactions';
+
+// Extend the imported type for component-specific needs
+interface Transaction extends Omit<TransactionType, 'details'> {
+  details?: string | Record<string, unknown>;
 }
 
 interface TransactionHistoryProps {
@@ -31,20 +27,9 @@ interface TransactionHistoryProps {
 }
 
 const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions }) => {
-  const theme = useTheme();
   // Pagination state
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  // Handle pagination change
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   // Helper to normalize status values
   const normalizeStatus = (status: string): 'pending' | 'completed' | 'failed' => {
@@ -54,6 +39,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions })
     if (statusLower === 'pending' || statusLower === 'processing') return 'pending';
     return 'completed'; // Default to completed
   };
+  // components/portfolio/TransactionHistory.tsx (continued)
 
   // Helper to shorten addresses
   const shortenAddress = (address: string): string => {
@@ -65,147 +51,188 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions })
     return address;
   };
 
+  // Helper to format details for display
+  const formatDetails = (details: string | Record<string, unknown> | undefined): string => {
+    if (!details) return '';
+    if (typeof details === 'string') return details;
+    // If it's an object, try to extract meaningful information or stringify it
+    if (typeof details === 'object') {
+      return Object.entries(details)
+        .filter(([key]) => ['description', 'memo', 'note', 'type'].includes(key))
+        .map(([, value]) => `${value}`)
+        .join(' ') || JSON.stringify(details).slice(0, 30) + '...';
+    }
+    return '';
+  };
+
+  // Calculate displayed rows based on pagination
+  const displayedTransactions = transactions.slice(
+    page * rowsPerPage, 
+    page * rowsPerPage + rowsPerPage
+  );
+
+  // Handle pagination change
+  const handleChangePage = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
-    <Box sx={{ mb: 4 }}>
-      <Typography gutterBottom variant="h6">
-        Recent Transactions
-      </Typography>
-      <TableContainer 
-        component={Paper} 
-        sx={{ 
-          borderRadius: 2,
-          overflow: 'hidden',
-          border: `1px solid ${theme.palette.divider}`,
-          boxShadow: 'none',
-        }}
-      >
+    <Card className="mb-8">
+      <CardHeader>
+        <CardTitle>Recent Transactions</CardTitle>
+      </CardHeader>
+      
+      <CardContent>
         <Table>
-          <TableHead>
-            <TableRow sx={{ bgcolor: alpha(theme.palette.background.default, 0.6) }}>
-              <TableCell>Type</TableCell>
-              <TableCell>Details</TableCell>
-              <TableCell>Chain</TableCell>
-              <TableCell align="right">Amount</TableCell>
-              <TableCell align="right">Value</TableCell>
-              <TableCell align="right">Time</TableCell>
-              <TableCell align="right">Status</TableCell>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Type</TableHead>
+              <TableHead>Details</TableHead>
+              <TableHead>Chain</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="text-right">Value</TableHead>
+              <TableHead className="text-right">Time</TableHead>
+              <TableHead className="text-right">Status</TableHead>
             </TableRow>
-          </TableHead>
+          </TableHeader>
+          
           <TableBody>
             {transactions.length === 0 ? (
               <TableRow>
-                <TableCell align="center" colSpan={7}>
-                  <Typography sx={{ py: 4 }} variant="body1">
-                    No transactions found
-                  </Typography>
+                <TableCell colSpan={7} className="text-center py-10">
+                  No transactions found
                 </TableCell>
               </TableRow>
             ) : (
-              transactions
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((tx, index) => (
-                  <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell>
-                      <Chip 
-                        label={tx.type} 
-                        size="small"
-                        sx={{ 
-                          bgcolor: 
-                            tx.type === 'Swap' ? alpha(theme.palette.info.main, 0.1) : 
-                              tx.type === 'Send' ? alpha(theme.palette.error.main, 0.1) : 
-                                alpha(theme.palette.success.main, 0.1),
-                          color: 
-                            tx.type === 'Swap' ? theme.palette.info.main : 
-                              tx.type === 'Send' ? theme.palette.error.main : 
-                                theme.palette.success.main,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Box>
-                          <Typography variant="body2">
-                            {tx.details || (tx.type === 'Swap' ? 
-                              `${shortenAddress(tx.from)} → ${shortenAddress(tx.to)}` : 
-                              `${shortenAddress(tx.from)} → ${shortenAddress(tx.to)}`
-                            )}
-                          </Typography>
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Typography color="text.secondary" variant="caption">
-                              {shortenAddress(tx.hash)}
-                            </Typography>
-                            <Tooltip title="View on blockchain explorer">
-                              <IconButton
-                                component="a"
-                                href={getTxExplorerUrl(tx.hash, tx.chainIndex || '1')}
-                                size="small"
-                                sx={{ ml: 0.5 }}
-                                target="_blank"
-                              >
-                                <LaunchIcon fontSize="inherit" />
-                              </IconButton>
-                            </Tooltip>
-                          </Box>
-                        </Box>
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      {tx.chain && (
-                        <Chip 
-                          label={tx.chain} 
-                          size="small"
-                          sx={{ 
-                            bgcolor: alpha(theme.palette.primary.main, 0.05),
-                            color: theme.palette.text.primary
-                          }}
-                        />
-                      )}
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="body2">
-                        {tx.amount}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography fontWeight={500} variant="body2">
-                        {tx.value}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="body2">
-                        {tx.timestamp}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Chip 
-                        color={
-                          normalizeStatus(tx.status) === 'completed' ? 
-                            'success' : 
-                            normalizeStatus(tx.status) === 'failed' ? 
-                              'error' : 
-                              'default'
-                        } 
-                        label={normalizeStatus(tx.status)}
-                        size="small"
-                        sx={{ textTransform: 'capitalize' }}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))
+              displayedTransactions.map((tx, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Chip 
+                      variant={
+                        tx.type === 'Swap' ? 'info' : 
+                        tx.type === 'Send' ? 'danger' : 
+                        'success'
+                      }
+                      size="sm"
+                    >
+                      {tx.type}
+                    </Chip>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="text-sm text-gray-900 dark:text-gray-200">
+                        {formatDetails(tx.details) || (tx.type === 'Swap' ? 
+                          `${shortenAddress(tx.from)} → ${shortenAddress(tx.to)}` : 
+                          `${shortenAddress(tx.from)} → ${shortenAddress(tx.to)}`
+                        )}
+                      </div>
+                      <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                        {shortenAddress(tx.hash)}
+                        <a 
+                          href={getTxExplorerUrl(tx.hash, tx.chainIndex || '1')}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="ml-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                          aria-label="View on blockchain explorer"
+                        >
+                          <LaunchIcon fontSize="inherit" />
+                        </a>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {tx.chain && (
+                      <Badge variant="default">
+                        {tx.chain}
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {tx.amount}
+                  </TableCell>
+                  <TableCell className="text-right font-medium">
+                    {tx.value}
+                  </TableCell>
+                  <TableCell className="text-right text-gray-500 dark:text-gray-400">
+                    {typeof tx.timestamp === 'string' ? new Date(tx.timestamp).toLocaleTimeString() : tx.timestamp}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Badge 
+                      variant={
+                        normalizeStatus(tx.status) === 'completed' ? 'success' : 
+                        normalizeStatus(tx.status) === 'failed' ? 'danger' : 
+                        'warning'
+                      }
+                    >
+                      {normalizeStatus(tx.status)}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>
-        <TablePagination
-          component="div"
-          count={transactions.length}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          rowsPerPageOptions={[5, 10, 25]}
-        />
-      </TableContainer>
-    </Box>
+        
+        {/* Pagination */}
+        {transactions.length > 0 && (
+          <div className="mt-4 flex items-center justify-between">
+            <div className="flex items-center">
+              <span className="text-sm text-gray-700 dark:text-gray-300 mr-2">
+                Show
+              </span>
+              <select
+                className="text-sm border-gray-300 dark:border-dark-100 rounded-md bg-white dark:bg-dark-300 text-gray-700 dark:text-gray-300"
+                value={rowsPerPage}
+                onChange={handleChangeRowsPerPage}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+              </select>
+              <span className="text-sm text-gray-700 dark:text-gray-300 ml-2">
+                entries
+              </span>
+            </div>
+            
+            <div className="flex space-x-1">
+              <Button
+                onClick={() => handleChangePage(page - 1)}
+                disabled={page === 0}
+                variant="default"
+                size="sm"
+              >
+                Previous
+              </Button>
+              
+              {Array.from({ length: Math.ceil(transactions.length / rowsPerPage) }).map((_, idx) => (
+                <Button
+                  key={idx}
+                  onClick={() => handleChangePage(idx)}
+                  variant={page === idx ? "primary" : "default"}
+                  size="sm"
+                >
+                  {idx + 1}
+                </Button>
+              ))}
+              
+              <Button
+                onClick={() => handleChangePage(page + 1)}
+                disabled={page >= Math.ceil(transactions.length / rowsPerPage) - 1}
+                variant="default"
+                size="sm"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

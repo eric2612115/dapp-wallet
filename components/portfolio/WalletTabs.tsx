@@ -1,6 +1,6 @@
 // components/portfolio/WalletTabs.tsx
 import React from 'react';
-import { Box, Tab, Tabs, useTheme } from '@mui/material';
+import { Tabs, TabList, TabTrigger } from '@/components/ui/Tabs';
 
 interface WalletTabsProps {
   tabValue: number;
@@ -8,36 +8,25 @@ interface WalletTabsProps {
 }
 
 const WalletTabs: React.FC<WalletTabsProps> = ({ tabValue, handleTabChange }) => {
-  const theme = useTheme();
-  
   return (
-    <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-      <Tabs 
-        TabIndicatorProps={{
-          style: {
-            backgroundColor: theme.palette.primary.main,
-            height: 3
-          }
-        }} 
-        onChange={handleTabChange}
-        value={tabValue}
-      >
-        <Tab 
-          label="Personal Wallet" 
-          sx={{ 
-            fontWeight: tabValue === 0 ? 600 : 400,
-            color: tabValue === 0 ? theme.palette.primary.main : theme.palette.text.primary
-          }}
-        />
-        <Tab 
-          label="Multi-Signature Wallet" 
-          sx={{ 
-            fontWeight: tabValue === 1 ? 600 : 400,
-            color: tabValue === 1 ? theme.palette.primary.main : theme.palette.text.primary
-          }}
-        />
-      </Tabs>
-    </Box>
+    <Tabs className="mb-6">
+      <TabList>
+        <TabTrigger
+          value="personal"
+          isActive={tabValue === 0}
+          onClick={(e) => handleTabChange(e, 0)}
+        >
+          PERSONAL WALLET
+        </TabTrigger>
+        <TabTrigger
+          value="multisig"
+          isActive={tabValue === 1}
+          onClick={(e) => handleTabChange(e, 1)}
+        >
+          MULTI-SIGNATURE WALLET
+        </TabTrigger>
+      </TabList>
+    </Tabs>
   );
 };
 

@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen flex flex-col bg-[#F5F5F5] dark:bg-[#1E1E1E] text-[#333333] dark:text-[#E0E0E0]`}>
+      <body className={`${inter.className} min-h-screen flex flex-col bg-gray-50 dark:bg-dark-300 text-gray-900 dark:text-white`}>
         <Providers>
           <Header />
           <main className="flex-grow container mx-auto max-w-7xl px-4 py-8">

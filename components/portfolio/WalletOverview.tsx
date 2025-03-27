@@ -1,17 +1,9 @@
 // components/portfolio/WalletOverview.tsx
 import React, { useState } from 'react';
-import {
-  alpha, Box, Button, Card, CardContent, Chip, 
-  IconButton, Tooltip, Typography, useTheme
-} from '@mui/material';
-import {
-  Add as AddIcon,
-  ArrowDropUp as ArrowUpIcon,
-  Check as CheckIcon,
-  ContentCopy as CopyIcon,
-  Send as SendIcon,
-  SwapHoriz as SwapIcon
-} from '@mui/icons-material';
+import { ContentCopy as CopyIcon, Check as CheckIcon } from '@mui/icons-material';
+import { Card, CardHeader, CardContent } from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import Badge from '@/components/ui/Badge';
 
 // Wallet type definition
 export interface Wallet {
@@ -26,7 +18,6 @@ interface WalletOverviewProps {
 }
 
 const WalletOverview: React.FC<WalletOverviewProps> = ({ wallet, onDeposit }) => {
-  const theme = useTheme();
   const [copiedAddress, setCopiedAddress] = useState(false);
 
   const copyAddress = (walletAddress: string) => {
@@ -36,84 +27,58 @@ const WalletOverview: React.FC<WalletOverviewProps> = ({ wallet, onDeposit }) =>
   };
 
   return (
-    <Card
-      sx={{ 
-        mb: 4,
-        border: `1px solid ${theme.palette.divider}`,
-        boxShadow: 1,
-        borderRadius: 2,
-        overflow: 'hidden',
-      }}
-    >
-      <Box
-        sx={{ 
-          p: 3, 
-          borderBottom: `1px solid ${theme.palette.divider}`,
-          background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.secondary.main, 0.1)} 100%)`,
-        }}
-      >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Box>
-            <Typography gutterBottom variant="h6">
-              Wallet Overview
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography sx={{ mr: 1 }} variant="body2">
-                {wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}
-              </Typography>
-              <Tooltip title={copiedAddress ? "Copied!" : "Copy Address"}>
-                <IconButton 
-                  color={copiedAddress ? "success" : "default"} 
-                  onClick={() => copyAddress(wallet.address)}
-                  size="small"
-                >
-                  {copiedAddress ? <CheckIcon fontSize="small" /> : <CopyIcon fontSize="small" />}
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Box>
-          <Box sx={{ textAlign: 'right' }}>
-            <Typography sx={{ mb: 0.5 }} variant="h5">
-              ${wallet.totalValue.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              })}
-            </Typography>
-            <Chip 
-              color="success" 
-              icon={<ArrowUpIcon />} 
-              label={`${wallet.change24h}% today`} 
-              size="small"
-              sx={{ fontWeight: 500 }}
-            />
-          </Box>
-        </Box>
-      </Box>
+    <Card className="mb-6">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+            Wallet Overview
+          </h3>
+          <div className="flex items-center">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              {wallet.address.slice(0, 10)}...{wallet.address.slice(-4)}
+            </p>
+            <button
+              onClick={() => copyAddress(wallet.address)}
+              className="ml-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              aria-label={copiedAddress ? "Copied" : "Copy address"}
+            >
+              {copiedAddress ? (
+                <CheckIcon fontSize="small" className="text-green-500" />
+              ) : (
+                <CopyIcon fontSize="small" />
+              )}
+            </button>
+          </div>
+        </div>
+        <div className="text-right">
+          <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+            ${wallet.totalValue.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}
+          </p>
+          <Badge variant="success" className="mt-1">
+            ▲ {wallet.change24h}% today
+          </Badge>
+        </div>
+      </CardHeader>
+      
       <CardContent>
-        <Box sx={{ display: 'flex', gap: 2, mb: 2, justifyContent: 'center' }}>
-          <Button
-            startIcon={<SendIcon />}
-            sx={{ borderRadius: 2, flexGrow: 1, maxWidth: 200 }}
-            variant="outlined"
-          >
-            Send
+        <div className="flex justify-center gap-3">
+          <Button variant="default" fullWidth>
+            <span className="mr-2">→</span> SEND
           </Button>
-          <Button
-            startIcon={<SwapIcon />}
-            sx={{ borderRadius: 2, flexGrow: 1, maxWidth: 200 }}
-            variant="outlined"
-          >
-            Swap
+          <Button variant="default" fullWidth>
+            <span className="mr-2">↔</span> SWAP
           </Button>
-          <Button
+          <Button 
             onClick={onDeposit}
-            startIcon={<AddIcon />}
-            sx={{ borderRadius: 2, flexGrow: 1, maxWidth: 200 }}
-            variant="contained"
+            variant="primary" 
+            fullWidth
           >
-            Deposit
+            <span className="mr-2">+</span> DEPOSIT
           </Button>
-        </Box>
+        </div>
       </CardContent>
     </Card>
   );

@@ -11,7 +11,7 @@ export interface Asset {
     logoUrl?: string;
     // Additional fields
     chain?: string;
-    chainIndex?: number | string;
+    chainIndex?: string; // Changed to string to be compatible with AssetTable
     tokenAddress?: string;    // Token contract address needed for ERC20 transfers
     decimals?: number;        // Token decimals needed for ERC20 transfers (defaults to 18)
     isWhitelisted?: boolean;  // For multi-signature wallet assets

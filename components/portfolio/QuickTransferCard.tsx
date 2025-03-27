@@ -1,14 +1,10 @@
 // components/portfolio/QuickTransferCard.tsx
 import React, { useState } from 'react';
-import {
-  alpha, Box, Button, Card, CardContent, Divider,
-  Grid, Radio, TextField, Typography, useTheme
-} from '@mui/material';
-import {
-  Add as AddIcon,
-  ArrowForward as ArrowForwardIcon,
-  AccountBalanceWallet as WalletIcon
-} from '@mui/icons-material';
+import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material';
+import { Card, CardContent } from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
+import Avatar from '@/components/ui/Avatar';
 
 // Available tokens interface
 interface TokenInfo {
@@ -43,14 +39,13 @@ interface QuickTransferCardProps {
 
 const QuickTransferCard: React.FC<QuickTransferCardProps> = ({
   userWalletAddress,
-  userWalletName = 'My Wallet',
+  userWalletName = 'My Personal Wallet',
   totalBalance,
   availableTokens,
   relatedWallets,
   onTransfer,
   onCreateMultisig
 }) => {
-  const theme = useTheme();
   const [selectedRecipient, setSelectedRecipient] = useState('');
   const [selectedToken, setSelectedToken] = useState('');
   const [transferAmount, setTransferAmount] = useState('');
@@ -74,226 +69,123 @@ const QuickTransferCard: React.FC<QuickTransferCardProps> = ({
   };
 
   return (
-    <Card
-      sx={{
-        mb: 4,
-        border: `1px solid ${theme.palette.divider}`,
-        borderRadius: 2,
-        overflow: 'hidden',
-      }}
-    >
-      <CardContent sx={{ p: 0 }}>
-        <Grid container>
-          {/* Left side - Sender wallet */}
-          <Grid
-            item
-            md={4}
-            sm={5}
-            sx={{
-              p: 3,
-              background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.secondary.main, 0.1)} 100%)`,
-              borderRight: { xs: 'none', sm: `1px solid ${theme.palette.divider}` },
-              borderBottom: { xs: `1px solid ${theme.palette.divider}`, sm: 'none' }
-            }}
-            xs={12}
-          >
-            <Box sx={{ mb: 3 }}>
-              <Typography color="text.secondary" gutterBottom variant="subtitle2">
-                From
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Box
-                  sx={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: '50%',
-                    bgcolor: alpha(theme.palette.primary.main, 0.1),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    mr: 1.5
-                  }}
-                >
-                  <WalletIcon color="primary" />
-                </Box>
-                <Box>
-                  <Typography fontWeight={600} variant="subtitle1">
-                    {userWalletName}
-                  </Typography>
-                  <Typography color="text.secondary" variant="caption">
-                    {formatAddress(userWalletAddress)}
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Box
-                sx={{
-                  p: 2,
-                  mt: 2,
-                  borderRadius: 1.5,
-                  bgcolor: alpha(theme.palette.background.paper, 0.6),
-                  border: `1px solid ${theme.palette.divider}`
-                }}
+    <Card className="mb-6">
+      <CardContent className="p-0">
+        <div className="grid md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-dark-100">
+          {/* Left side - Sender */}
+          <div className="p-6 md:col-span-2 bg-gray-50 dark:bg-dark-200">
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">From</h3>
+            
+            <div className="flex items-center mb-4">
+              <Avatar 
+                initials="D" 
+                size="md"
+                className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 mr-3"
+              />
+              <div>
+                <p className="font-medium text-gray-900 dark:text-white">{userWalletName}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{formatAddress(userWalletAddress)}</p>
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-dark-100 border border-gray-200 dark:border-dark-100 rounded-md p-3 mb-4">
+              <p className="text-xs text-gray-500 dark:text-gray-400">Total Balance</p>
+              <p className="text-xl font-semibold text-gray-900 dark:text-white">${totalBalance.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}</p>
+            </div>
+            
+            <div className="space-y-3">
+              <select 
+                className="w-full py-2 px-3 border border-gray-300 dark:border-dark-100 bg-white dark:bg-dark-300 rounded-md shadow-sm text-gray-700 dark:text-gray-200"
+                value={selectedToken}
+                onChange={(e) => setSelectedToken(e.target.value)}
               >
-                <Typography color="text.secondary" variant="caption">
-                  Total Balance
-                </Typography>
-                <Typography fontWeight={600} sx={{ mt: 0.5 }} variant="h5">
-                  ${totalBalance.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                  })}
-                </Typography>
-              </Box>
-            </Box>
-
-            {/* Basic token selection dropdown */}
-            <TextField
-              select
-              fullWidth
-              label="Select Token"
-              value={selectedToken}
-              onChange={(e) => setSelectedToken(e.target.value)}
-              sx={{ mb: 2 }}
-              SelectProps={{ native: true }}
-            >
-              <option value="">Select a token</option>
-              {availableTokens.map((token) => (
-                <option key={token.symbol} value={token.symbol}>
-                  {token.symbol} - Balance: {token.balance}
-                </option>
-              ))}
-            </TextField>
-
-            {/* Transfer amount */}
-            <TextField
-              fullWidth
-              label="Amount"
-              type="number"
-              value={transferAmount}
-              onChange={(e) => setTransferAmount(e.target.value)}
-              disabled={!selectedToken}
-              sx={{ mb: 2 }}
-            />
-          </Grid>
-
-          {/* Middle arrow - only displayed on tablet and desktop */}
-          <Grid
-            item
-            md={1}
-            sm={2}
-            sx={{
-              display: { xs: 'none', sm: 'flex' },
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                bgcolor: alpha(theme.palette.primary.main, 0.1),
-              }}
-            >
-              <ArrowForwardIcon color="primary" />
-            </Box>
-          </Grid>
-
-          {/* Right side - Recipient wallet selection */}
-          <Grid item md={7} sm={5} sx={{ p: 3 }} xs={12}>
-            <Box sx={{ mb: 2 }}>
-              <Typography color="text.secondary" gutterBottom variant="subtitle2">
-                To
-              </Typography>
-
-              {/* Simplified recipient selection */}
-              {relatedWallets.length === 0 ? (
-                <Box
-                  sx={{
-                    p: 3,
-                    textAlign: 'center',
-                    bgcolor: alpha(theme.palette.warning.main, 0.05),
-                    borderRadius: 2,
-                    border: `1px solid ${alpha(theme.palette.warning.main, 0.2)}`
-                  }}
+                <option value="">Select a token</option>
+                {availableTokens.map((token) => (
+                  <option key={token.symbol} value={token.symbol}>
+                    {token.symbol} - Balance: {token.balance}
+                  </option>
+                ))}
+              </select>
+              
+              <Input
+                type="number"
+                placeholder="Amount"
+                value={transferAmount}
+                onChange={(e) => setTransferAmount(e.target.value)}
+                disabled={!selectedToken}
+                fullWidth
+              />
+            </div>
+          </div>
+          
+          {/* Arrow for desktop */}
+          <div className="hidden md:flex md:col-span-1 items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-dark-100 flex items-center justify-center text-blue-500 dark:text-blue-400">
+              <ArrowForwardIcon />
+            </div>
+          </div>
+          
+          {/* Right side - Recipient */}
+          <div className="p-6 md:col-span-2">
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">To</h3>
+            
+            {relatedWallets.length === 0 ? (
+              <div className="text-center p-6 border border-yellow-200 dark:border-yellow-900/30 rounded-md bg-yellow-50 dark:bg-yellow-900/10">
+                <p className="text-sm text-yellow-700 dark:text-yellow-500 mb-3">
+                  No related wallets found. You need to create a multi-signature wallet first.
+                </p>
+                <Button
+                  onClick={onCreateMultisig}
+                  variant="default"
+                  startIcon={<span>+</span>}
                 >
-                  <Typography color="text.secondary" sx={{ mb: 2 }} variant="body2">
-                    No related wallets found. You need to create a multi-signature wallet first.
-                  </Typography>
-                  <Button
-                    color="primary"
-                    onClick={onCreateMultisig}
-                    startIcon={<AddIcon />}
-                    variant="outlined"
+                  New Multi-sig Wallet
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-2 max-h-56 overflow-y-auto">
+                {relatedWallets.map((wallet) => (
+                  <div
+                    key={wallet.multisig_address}
+                    onClick={() => setSelectedRecipient(wallet.multisig_address)}
+                    className={`flex items-center p-3 border rounded-md cursor-pointer ${
+                      selectedRecipient === wallet.multisig_address
+                        ? 'border-clay-500 dark:border-clay-400 bg-clay-50 dark:bg-clay-900/10'
+                        : 'border-gray-200 dark:border-dark-100 hover:border-gray-300 dark:hover:border-gray-700'
+                    }`}
                   >
-                    New Multi-sig Wallet
-                  </Button>
-                </Box>
-              ) : (
-                <Box sx={{ maxHeight: 240, overflow: 'auto' }}>
-                  {relatedWallets.map((wallet) => (
-                    <Box
-                      key={wallet.multisig_address}
-                      onClick={() => setSelectedRecipient(wallet.multisig_address)}
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        p: 2,
-                        mb: 1,
-                        borderRadius: 2,
-                        border: `1px solid ${
-                          selectedRecipient === wallet.multisig_address
-                            ? theme.palette.primary.main
-                            : theme.palette.divider
-                        }`,
-                        bgcolor: selectedRecipient === wallet.multisig_address
-                          ? alpha(theme.palette.primary.main, 0.05)
-                          : 'transparent',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <Radio
-                        checked={selectedRecipient === wallet.multisig_address}
-                        value={wallet.multisig_address}
-                        name="recipient-radio-buttons"
-                        sx={{ p: 0.5, mr: 1 }}
-                      />
-                      <Box>
-                        <Typography fontWeight={600} variant="subtitle2">
-                          {wallet.name}
-                        </Typography>
-                        <Typography color="text.secondary" variant="caption">
-                          {wallet.chain} - {formatAddress(wallet.multisig_address)}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  ))}
-                </Box>
-              )}
-            </Box>
-
-            <Divider sx={{ my: 2 }} />
-
-            {/* Transfer button */}
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                    <input
+                      type="radio"
+                      checked={selectedRecipient === wallet.multisig_address}
+                      onChange={() => setSelectedRecipient(wallet.multisig_address)}
+                      className="mr-3"
+                    />
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">{wallet.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {wallet.chain} - {formatAddress(wallet.multisig_address)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div className="mt-6 flex justify-end">
               <Button
-                color="primary"
-                disabled={!selectedRecipient || !selectedToken || !transferAmount || relatedWallets.length === 0}
                 onClick={handleSubmit}
-                size="large"
+                disabled={!selectedRecipient || !selectedToken || !transferAmount || relatedWallets.length === 0}
+                variant="default"
                 startIcon={<ArrowForwardIcon />}
-                sx={{ borderRadius: 2 }}
-                variant="contained"
               >
-                Transfer
+                TRANSFER
               </Button>
-            </Box>
-          </Grid>
-        </Grid>
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

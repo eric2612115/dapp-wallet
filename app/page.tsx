@@ -1,8 +1,8 @@
+// app/page.tsx
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Alert, AlertTitle, alpha, Box, Typography, useTheme } from '@mui/material';
-import { AccountBalanceWallet as WalletIcon } from '@mui/icons-material';
 import { useAccount } from 'wagmi';
+import { AccountBalanceWallet as WalletIcon } from '@mui/icons-material';
 
 import { useAssets } from '@/lib/hooks/useAssets';
 import { useTransactions } from '@/lib/hooks/useTransactions';
@@ -17,11 +17,11 @@ import AssetControls from '@/components/portfolio/AssetControls';
 import AssetTable from '@/components/portfolio/AssetTable';
 import TransactionHistory from '@/components/portfolio/TransactionHistory';
 import DepositDialog from '@/components/portfolio/DepositDialog';
+import { Alert } from '@/components/ui/Alert';
 
 import type { Asset } from '@/types/assets';
 
 export default function HomePage() {
-  const theme = useTheme();
   usePageView();
   const { isConnected, address } = useAccount();
   const [mounted, setMounted] = useState(false);
@@ -197,61 +197,37 @@ export default function HomePage() {
 
   return (
     <div>
-      <Box sx={{ mb: 4 }}>
-        <Typography component="h1" gutterBottom variant="h4">
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
           DApp Wallet Dashboard
-        </Typography>
-        <Typography color="text.secondary" variant="body1">
+        </h1>
+        <p className="text-gray-600 dark:text-gray-300">
           Manage your assets, transfers, and transactions across all your wallets
-        </Typography>
-      </Box>
+        </p>
+      </div>
 
       {!isConnected ? (
-        <Box
-          sx={{ 
-            textAlign: 'center', 
-            py: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            bgcolor: alpha(theme.palette.background.paper, 0.4),
-            borderRadius: 2,
-            border: `1px solid ${theme.palette.divider}`
-          }}
-        >
-          <Box
-            sx={{
-              bgcolor: alpha(theme.palette.primary.main, 0.1),
-              color: theme.palette.primary.main,
-              width: 64,
-              height: 64,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '50%',
-              mb: 2
-            }}
-          >
+        <div className="text-center py-8 flex flex-col items-center justify-center bg-white dark:bg-dark-200 rounded-lg border border-gray-200 dark:border-dark-100">
+          <div className="bg-clay-100 dark:bg-clay-900/30 text-clay-600 dark:text-clay-300 w-16 h-16 flex items-center justify-center rounded-full mb-2">
             <WalletIcon fontSize="large" />
-          </Box>
-          <Typography gutterBottom variant="h6">
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
             Please connect your wallet to view your assets
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 500, mb: 3 }} variant="body2">
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400 max-w-md mb-6">
             Connect your wallet to manage your assets, view your portfolio, and execute transfers between wallets.
-          </Typography>
-        </Box>
+          </p>
+        </div>
       ) : (
         <>
           {/* Success alert */}
           {successAlert && (
             <Alert 
-              onClose={() => setSuccessAlert(false)} 
-              severity="success"
-              sx={{ mb: 3 }}
+              variant="success" 
+              title="Success"
+              onClose={() => setSuccessAlert(false)}
+              className="mb-4"
             >
-              <AlertTitle>Success</AlertTitle>
               {successMessage}
             </Alert>
           )}
@@ -305,9 +281,9 @@ export default function HomePage() {
 
           {/* Asset table */}
           {loadingAssets ? (
-            <Box sx={{ mb: 4, p: 3, display: 'flex', justifyContent: 'center' }}>
+            <div className="mb-4 p-3 flex justify-center text-gray-500 dark:text-gray-400">
               Loading assets...
-            </Box>
+            </div>
           ) : (
             <AssetTable 
               assets={filteredAssets} 
@@ -327,11 +303,17 @@ export default function HomePage() {
 
           {/* Transaction history */}
           {loadingTransactions ? (
-            <Box sx={{ mb: 4, p: 3, display: 'flex', justifyContent: 'center' }}>
+            <div className="mb-4 p-3 flex justify-center text-gray-500 dark:text-gray-400">
               Loading transactions...
-            </Box>
+            </div>
           ) : (
-            <TransactionHistory transactions={transactions} />
+            <TransactionHistory 
+              transactions={transactions.map(tx => ({
+                ...tx,
+                // Convert details to string if it's an object
+                details: tx.details ? (typeof tx.details === 'string' ? tx.details : JSON.stringify(tx.details)) : undefined
+              }))} 
+            />
           )}
 
           {/* Deposit dialog */}

@@ -1,12 +1,6 @@
 // components/portfolio/MultisigWalletSelector.tsx
 import React from 'react';
-import { 
-  Alert, 
-  Box, 
-  CircularProgress, 
-  TextField, 
-  Typography 
-} from '@mui/material';
+import { Alert, AlertDescription } from '@/components/ui/Alert';
 import type { MultisigWallet } from '@/types/assets';
 
 interface MultisigWalletSelectorProps {
@@ -25,49 +19,46 @@ const MultisigWalletSelector: React.FC<MultisigWalletSelectorProps> = ({
   handleMultisigWalletChange
 }) => {
   return (
-    <Box sx={{ mb: 3 }}>
+    <div className="mb-6">
       {isLoadingWallets ? (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <CircularProgress size={20} />
-          <Typography variant="body2">Loading wallets...</Typography>
-        </Box>
+        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+          <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Loading wallets...</span>
+        </div>
       ) : walletsError ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          Error loading multi-signature wallets. Please try again.
+        <Alert variant="error" className="mb-4">
+          <AlertDescription>
+            Error loading multi-signature wallets. Please try again.
+          </AlertDescription>
         </Alert>
       ) : relatedMultisigWallets.length === 0 ? (
-        <Alert severity="info" sx={{ mb: 2 }}>
-          No multi-signature wallets found. Create one to get started.
+        <Alert variant="info" className="mb-4">
+          <AlertDescription>
+            No multi-signature wallets found. Create one to get started.
+          </AlertDescription>
         </Alert>
       ) : (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Typography sx={{ minWidth: 120 }} variant="body2">
+        <div className="flex items-center gap-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
             Select wallet:
-          </Typography>
-          <TextField
-            SelectProps={{
-              native: true,
-            }}
-            onChange={(e) => handleMultisigWalletChange(e.target.value)}
-            select
-            size="small"
-            sx={{ 
-              minWidth: 300,
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 2,
-              }
-            }}
+          </label>
+          <select
             value={selectedMultisigWalletAddress}
+            onChange={(e) => handleMultisigWalletChange(e.target.value)}
+            className="block w-full max-w-md pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-100 focus:outline-none focus:ring-clay-500 dark:focus:ring-clay-400 focus:border-clay-500 dark:focus:border-clay-400 sm:text-sm rounded-md bg-white dark:bg-dark-300 text-gray-700 dark:text-gray-200"
           >
             {relatedMultisigWallets.map((wallet) => (
               <option key={wallet.multisig_address} value={wallet.multisig_address}>
                 {wallet.name}
               </option>
             ))}
-          </TextField>
-        </Box>
+          </select>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };
 

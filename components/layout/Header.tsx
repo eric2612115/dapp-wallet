@@ -20,7 +20,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white dark:bg-dark-200 shadow-md border-b border-gray-200 dark:border-dark-100">
+    <header className="bg-white dark:bg-dark-300 shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -35,19 +35,25 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`px-3 py-2 rounded-md text-sm font-medium ${
-                  pathname === item.href
-                    ? 'bg-clay-500 text-white'
-                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-100'
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive = pathname === item.href || 
+                (item.href !== '/' && pathname?.startsWith(item.href));
+                
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`px-3 py-2 rounded-md text-sm font-medium ${
+                    isActive
+                      ? 'bg-clay-500 text-white'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-100'
+                  }`}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Right Side Controls */}
@@ -57,8 +63,10 @@ export default function Header() {
             
             {/* Mobile Menu Button */}
             <button
-              className="md:hidden p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-100"
+              className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-100"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-expanded={mobileMenuOpen}
+              aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -75,22 +83,28 @@ export default function Header() {
         
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-2 space-y-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  pathname === item.href
-                    ? 'bg-clay-500 text-white'
-                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-100'
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
+          <nav className="md:hidden py-2 space-y-1 animate-fadeIn">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href || 
+                (item.href !== '/' && pathname?.startsWith(item.href));
+                
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`block px-3 py-2 rounded-md text-base font-medium ${
+                    isActive
+                      ? 'bg-clay-500 text-white'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-100'
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
+          </nav>
         )}
       </div>
     </header>
