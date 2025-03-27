@@ -1,4 +1,3 @@
-// components/layout/Header.tsx
 'use client';
 
 import { useState } from 'react';
@@ -9,10 +8,11 @@ import { ThemeToggle } from '../shared/ThemeToggle';
 
 const navItems = [
   { name: 'Home', href: '/' },
-  { name: 'Vaults', href: '/vaults' },
-  { name: 'Portfolio', href: '/portfolio' },
-  { name: 'Wallet', href: '/wallet' },
-  { name: 'About', href: '/about' },
+  // { name: 'Vaults', href: '/vaults' },
+  // { name: 'Portfolio', href: '/portfolio' },
+  // { name: 'Wallet', href: '/wallet' },
+  { name: 'Multi-Signature', href: '/multisig' },
+  // { name: 'About', href: '/about' },
 ];
 
 export default function Header() {

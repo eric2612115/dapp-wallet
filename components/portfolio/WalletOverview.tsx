@@ -1,9 +1,12 @@
-// components/portfolio/WalletOverview.tsx
+'use client';
+
 import React, { useState } from 'react';
 import { ContentCopy as CopyIcon, Check as CheckIcon } from '@mui/icons-material';
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
+import SignatureStatus from '@/components/multisig/SignatureStatus';
+import { ExtendedMultisigWallet } from '@/contexts/WalletContext';
 
 // Wallet type definition
 export interface Wallet {
@@ -15,9 +18,16 @@ export interface Wallet {
 interface WalletOverviewProps {
   wallet: Wallet;
   onDeposit: () => void;
+  isMultisig?: boolean;
+  multisigInfo?: ExtendedMultisigWallet;
 }
 
-const WalletOverview: React.FC<WalletOverviewProps> = ({ wallet, onDeposit }) => {
+const WalletOverview: React.FC<WalletOverviewProps> = ({ 
+  wallet, 
+  onDeposit, 
+  isMultisig = false,
+  multisigInfo
+}) => {
   const [copiedAddress, setCopiedAddress] = useState(false);
 
   const copyAddress = (walletAddress: string) => {
@@ -28,10 +38,10 @@ const WalletOverview: React.FC<WalletOverviewProps> = ({ wallet, onDeposit }) =>
 
   return (
     <Card className="mb-6">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
         <div>
           <h3 className="text-lg font-medium text-warm-text dark:text-white">
-            Wallet Overview
+            {isMultisig ? multisigInfo?.name || 'Multi-signature Wallet' : 'Personal Wallet'}
           </h3>
           <div className="flex items-center">
             <p className="text-sm text-warm-textSecondary dark:text-gray-300">
@@ -49,19 +59,43 @@ const WalletOverview: React.FC<WalletOverviewProps> = ({ wallet, onDeposit }) =>
               )}
             </button>
           </div>
+          
+          {/* Multi-sig specific info */}
+          {isMultisig && multisigInfo && (
+            <div className="mt-2 flex items-center">
+              <Badge variant="primary" className="mr-2">
+                {multisigInfo.requiredSignatures}/{multisigInfo.totalSigners} Signatures
+              </Badge>
+              <Badge variant="secondary">
+                {multisigInfo.chain}
+              </Badge>
+            </div>
+          )}
         </div>
-        <div className="text-right">
+        <div className="text-right mt-4 sm:mt-0">
           <p className="text-2xl font-semibold text-warm-text dark:text-white">
             ${wallet.totalValue.toLocaleString(undefined, {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2
             })}
           </p>
-          <Badge variant="success" className="mt-1">
-            ▲ {wallet.change24h}% today
+          <Badge variant={wallet.change24h >= 0 ? "success" : "danger"} className="mt-1">
+            {wallet.change24h >= 0 ? '▲' : '▼'} {Math.abs(wallet.change24h)}% today
           </Badge>
         </div>
       </CardHeader>
+      
+      {isMultisig && multisigInfo && (
+        <div className="px-6 pb-2 pt-0">
+          <div className="p-3 bg-warm-bg dark:bg-dark-100 rounded-md">
+            <SignatureStatus
+              requiredSignatures={multisigInfo.requiredSignatures}
+              totalSigners={multisigInfo.totalSigners}
+              signers={multisigInfo.signers}
+            />
+          </div>
+        </div>
+      )}
       
       <CardContent>
         <div className="flex justify-center gap-3">
@@ -78,6 +112,15 @@ const WalletOverview: React.FC<WalletOverviewProps> = ({ wallet, onDeposit }) =>
           >
             <span className="mr-2">+</span> DEPOSIT
           </Button>
+          
+          {isMultisig && (
+            <Button 
+              variant="outline" 
+              onClick={() => window.location.href = '/multisig/policies'}
+            >
+              <span className="mr-2">⚙️</span> POLICIES
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
