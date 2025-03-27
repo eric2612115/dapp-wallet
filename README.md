@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DApp Wallet - Portfolio Page
 
-## Getting Started
+This repository contains a restructured implementation of the Portfolio page for a DApp Wallet application built with Next.js, React, and Material UI.
 
-First, run the development server:
+## Project Structure
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+The project has been restructured to improve maintainability by separating concerns:
+
+```
+/app
+  /portfolio
+    page.tsx               # Main portfolio page component
+/components
+  /portfolio
+    AssetControls.tsx      # Search and action buttons component
+    AssetTable.tsx         # Table for displaying assets
+    DepositDialog.tsx      # Dialog for deposit functionality
+    MultisigWalletSelector.tsx # Component for selecting multi-sig wallets
+    QuickTransferCard.tsx  # Card component for transfers between wallets
+    TransactionHistory.tsx # Component for displaying transaction history
+    WalletOverview.tsx     # Overview card for wallet information
+    WalletTabs.tsx         # Tabs for switching between wallet types
+    WithdrawHandler.tsx    # Component handling withdraw functionality
+/hooks
+  useAssets.ts             # Hook for fetching and managing assets
+  useTransactions.ts       # Hook for fetching and managing transactions
+  useWalletData.ts         # Hook for wallet-related data and operations
+  useWithdraw.ts           # Hook for handling withdraw operations
+/lib
+  /hooks
+    usePageView.ts         # Analytics hook
+    useQueryWallets.ts     # Hook for querying wallets from API
+    useWithdrawFromSafe.ts # Hook for safe withdrawals
+  /mockServices.ts         # Mock service implementations for API calls
+/types
+  assets.ts                # Type definitions for assets and related data
+  transactions.ts          # Type definitions for transaction data
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Wallet Management**: Support for personal and multi-signature wallets
+- **Asset Tracking**: Display and management of digital assets across different blockchains
+- **Transfer Functionality**: Transfer assets between wallets
+- **Dark Mode Support**: Full dark mode theming with Material UI
+- **Responsive Design**: Adapts to different screen sizes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Design Decisions
 
-## Learn More
+1. **Hooks-based Architecture**: Custom hooks are used to separate data fetching and state management logic from UI components.
+2. **Type Definitions**: Strong TypeScript typing for all data structures.
+3. **Component Composition**: Breaking UI into smaller, reusable components.
+4. **API Abstraction**: API calls are abstracted through service layers for better testability.
 
-To learn more about Next.js, take a look at the following resources:
+## How to Run
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Run the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-## Deploy on Vercel
+3. Open [http://localhost:3000/portfolio](http://localhost:3000/portfolio) in your browser to see the portfolio page.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Implementation Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- The application uses Material UI for UI components
+- Tailwind CSS for styling with custom theme configuration
+- React hooks for state management
+- wagmi for Web3 connectivity
+- Next.js for routing and server-side functionality
